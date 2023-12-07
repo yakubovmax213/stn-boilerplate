@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
-import { deleteChats, getMockUserId } from '@/lib/api/db';
+import { deleteChats } from '@/lib/api/db';
+import { withSessionHandler } from '@/modules/auth/server/with-session-handler';
 
-export const POST = async (): Promise<NextResponse> => {
-  try {
-    const currentUserId = await getMockUserId();
+export const POST = withSessionHandler(
+  async ({ currentUser }): Promise<NextResponse> => {
+    try {
+      await deleteChats(currentUser.id);
 
-    await deleteChats(currentUserId);
-
-    return NextResponse.json({ status: 200 });
-  } catch (e) {
-    return NextResponse.json({ error: e });
+      return NextResponse.json({ status: 200 });
+    } catch (e) {
+      return NextResponse.json({ error: e });
+    }
   }
-};
+);

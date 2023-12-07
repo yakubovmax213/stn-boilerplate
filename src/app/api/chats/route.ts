@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getChatsList, getMockUserId } from '@/lib/api/db';
+import { getChatsList } from '@/lib/api/db';
+import { withSessionHandler } from '@/modules/auth/server/with-session-handler';
 
 export const dynamic = 'force-dynamic';
 
-export const GET = async (): Promise<NextResponse> => {
-  try {
-    const currentUserId = await getMockUserId();
+export const GET = withSessionHandler(
+  async ({ currentUser }): Promise<NextResponse> => {
+    try {
+      const chats = await getChatsList(currentUser.id);
 
-    const chats = await getChatsList(currentUserId);
-
-    return NextResponse.json(chats);
-  } catch (e) {
-    return NextResponse.json({ error: e });
+      return NextResponse.json(chats);
+    } catch (e) {
+      return NextResponse.json({ error: e });
+    }
   }
-};
+);

@@ -1,4 +1,11 @@
-import { PrismaClient, Category, User, Prisma, Message, Chat } from '@prisma/client';
+import {
+  PrismaClient,
+  Category,
+  User,
+  Prisma,
+  Message,
+  Chat,
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -56,7 +63,7 @@ export const getChatsList = async (userId: string): Promise<Chat[]> =>
           tag: category.name,
           counter: _count.messages,
         };
-      }),
+      })
     );
 
 export const getCategoriesList = async (userId: string): Promise<Category[]> =>
@@ -82,7 +89,7 @@ export const getCategoryById = async (id: string): Promise<Category | null> =>
 
 export const getChatById = async (
   id: string,
-  include?: Prisma.ChatFindUniqueArgs['include'],
+  include?: Prisma.ChatFindUniqueArgs['include']
 ): Promise<(Chat & { messages?: Message[] }) | null> =>
   prisma.chat.findUnique({
     where: {
@@ -94,7 +101,7 @@ export const getChatById = async (
 export const getMessagesByChatId = async (
   chatId: string | undefined,
   count = 20,
-  orderBy: 'asc' | 'desc' = 'desc',
+  orderBy: 'asc' | 'desc' = 'desc'
 ): Promise<Omit<Message, 'createdAt'>[]> =>
   prisma.message.findMany({
     where: {
@@ -109,7 +116,7 @@ export const getMessagesByChatId = async (
 // Mutations
 export const createCategory = async (
   data: Pick<Category, 'name' | 'color'>,
-  userId: string,
+  userId: string
 ): Promise<Category> => {
   const category = await prisma.category.create({
     data: {
@@ -139,7 +146,7 @@ export const createCategory = async (
 export const createMessage = async (
   data: Pick<Message, 'content' | 'role'>,
   chatId: string | undefined,
-  authorId?: string,
+  authorId?: string
 ): Promise<Message> => {
   const message = await prisma.message.create({
     data: {
@@ -178,9 +185,12 @@ export const createMessage = async (
 };
 
 export const createChat = async (
-  { content, ...data }: Omit<Prisma.ChatCreateInput, 'category'> & { content: string },
+  {
+    content,
+    ...data
+  }: Omit<Prisma.ChatCreateInput, 'category'> & { content: string },
   currentUserId: string,
-  categoryId: string | undefined,
+  categoryId: string | undefined
 ): Promise<Chat> =>
   prisma.chat.create({
     data: {
@@ -218,7 +228,9 @@ export const createChat = async (
     },
   });
 
-export const deleteChats = async (userId: string): Promise<Prisma.BatchPayload> =>
+export const deleteChats = async (
+  userId: string
+): Promise<Prisma.BatchPayload> =>
   prisma.chat.deleteMany({
     where: {
       users: {
@@ -235,3 +247,40 @@ export const deleteChatById = async (chatId: string): Promise<Chat> =>
       id: chatId,
     },
   });
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  return user;
+};
+
+export const gerUserIdByEmail = async (
+  email: string
+): Promise<string | null> => {
+  const user = await getUserByEmail(email);
+
+  return user?.id ?? null;
+};
+
+export const createUser = async (
+  data: Pick<Prisma.UserCreateInput, 'email' | 'password'>
+): Promise<Omit<User, 'password'>> => {
+  const user = await prisma.user.create({
+    data,
+    select: {
+      id: true,
+      email: true,
+      chats: true,
+      categories: true,
+      messages: true,
+      name: true,
+      password: false,
+    },
+  });
+
+  return user;
+};

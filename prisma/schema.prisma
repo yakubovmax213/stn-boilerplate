@@ -28,6 +28,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  password      String?
 
   messages      Message[]
   categories    UserCategory[]
@@ -38,7 +39,7 @@ model UserChat {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
+
   userId     String
   chatId     String
 
@@ -50,7 +51,7 @@ model UserCategory {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
+
   userId     String
   categoryId String
 
@@ -75,7 +76,7 @@ model Chat {
   title      String
   icon       String
   creativity ChatCreativity
-  
+
   categoryId String
 
   messages  Message[]
