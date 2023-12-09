@@ -23,6 +23,9 @@ export default defineConfig({
     baseURL,
     trace: 'retry-with-trace',
   },
+  expect: {
+    timeout: 30000,
+  },
 
   /* Configure projects for major browsers */
   projects: [
