@@ -16,7 +16,7 @@ export const authorizeAction = async ({
 
     return null;
   } catch (error) {
-    if ((error as Error).message.includes('CredentialsSignin')) {
+    if ((error as any)?.type?.includes('CredentialsSignin')) {
       return 'CredentialSignin';
     }
 

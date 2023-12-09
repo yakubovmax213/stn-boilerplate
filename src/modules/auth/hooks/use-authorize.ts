@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ToastTypes, useToasts } from '@stn-ui/toasts';
 import { authorizeAction } from '../actions/authorize.action';
 import { AuthorizeData } from '../types';
+import { revalidatePath } from 'next/cache';
 
 interface UseAuthorize {
   handleFormSubmit: (data: AuthorizeData['data']) => Promise<void>;
@@ -11,7 +12,6 @@ interface UseAuthorize {
 
 export const useAuthorize = (authType: AuthorizeData['type']): UseAuthorize => {
   const { notify } = useToasts();
-  const router = useRouter();
 
   const handleFormSubmit = async (
     data: AuthorizeData['data']
@@ -22,13 +22,13 @@ export const useAuthorize = (authType: AuthorizeData['type']): UseAuthorize => {
     } as AuthorizeData);
 
     if (code === 'CredentialSignin') {
-      notify({
+      return notify({
         type: ToastTypes.Danger,
         message: 'Invalid credentials',
       });
     }
 
-    router.push('/');
+    revalidatePath('/', 'layout');
   };
 
   return {
