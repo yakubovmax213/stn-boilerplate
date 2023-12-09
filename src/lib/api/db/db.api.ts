@@ -284,3 +284,19 @@ export const createUser = async (
 
   return user;
 };
+
+export const deleteUser = async (id: string): Promise<void> => {
+  await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+export const deleteUserByEmail = async (email: string): Promise<void> => {
+  await prisma.user.delete({
+    where: {
+      email,
+    },
+  });
+};

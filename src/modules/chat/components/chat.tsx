@@ -15,22 +15,26 @@ export const Chat: FC<Props> = ({ messages }) => {
 
   return (
     <>
-      <MessageList>
-        {chatMessages.map(({ id, role, createdAt, author, content, isLoading }) => {
-          const type = role === 'assistant' ? 'received' : 'sent';
+      <MessageList data-testid="messageList">
+        {chatMessages.map(
+          ({ id, role, createdAt, author, content, isLoading }) => {
+            const type = role === 'assistant' ? 'received' : 'sent';
 
-          return (
-            <MessageItem
-              key={id}
-              time={createdAt}
-              type={type}
-              author={author?.name}
-              isLoading={isLoading}
-            >
-              {content}
-            </MessageItem>
-          );
-        })}
+            return (
+              <div data-testid={`message-${type}`}>
+                <MessageItem
+                  key={id}
+                  time={createdAt}
+                  type={type}
+                  author={author?.name}
+                  isLoading={isLoading}
+                >
+                  {content}
+                </MessageItem>
+              </div>
+            );
+          }
+        )}
       </MessageList>
       <MessageForm onSubmit={sendMessage} />
     </>

@@ -78,6 +78,7 @@
     "unified": "^11.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
     "@wallwhite/eslint-config-react-ts": "^0.1.5",
     "prisma": "5.4.2",
     "sass": "^1.69.4",
